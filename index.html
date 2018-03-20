@@ -34,7 +34,7 @@
         
             function preload ()
             {
-                this.load.image('sky', 'assets/sky.png');
+                this.load.image('background', 'assets/background.jpg');
                 this.load.image('ground', 'assets/platform.png');
                 this.load.image('star', 'assets/star.png');
                 this.load.image('bomb', 'assets/bomb.png');
@@ -46,7 +46,7 @@
         
             function create ()
             {
-                this.add.image(400, 300, 'sky');
+                this.add.image(400, 300, 'background');
 
                 platforms = this.physics.add.staticGroup();
 
@@ -103,11 +103,17 @@
                 this.physics.add.overlap(player, stars, collectStar, null, this);
 
                 scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+                scoreText.fixedToCamera = true;
+                
                 bombs = this.physics.add.group();
 
                 this.physics.add.collider(bombs, platforms);
 
                 this.physics.add.collider(player, bombs, hitBomb, null, this);
+
+
+                this.cameras.main.setSize(800, 600);
+                this.cameras.main.startFollow(player);
 
             }
 

@@ -29,6 +29,8 @@
             
             var score = 0;
             var scoreText;
+            var lastx = 0;
+            var lasty = 0;
 
             var game = new Phaser.Game(config);
         
@@ -38,15 +40,22 @@
                 this.load.image('ground', 'assets/platform.png');
                 this.load.image('star', 'assets/star.png');
                 this.load.image('bomb', 'assets/bomb.png');
-                this.load.spritesheet('dude', 
-                    'assets/dude.png',
-                    { frameWidth: 32, frameHeight: 48 }
+                this.load.spritesheet('box_dude', 
+                    'assets/box_dude.png',
+                    { frameWidth: 32, frameHeight: 32 }
                 );
             }
         
             function create ()
-            {
-                this.add.image(400, 300, 'background');
+            {   
+                window.particles = this.add.particles('bomb');
+                var emitter = particles.createEmitter({
+                    speed: 100,
+                    scale: { start: 1, end: 0 },
+                    blendMode: 'ADD'
+                });
+                
+                this.add.image(1440, 900, 'background');
 
                 platforms = this.physics.add.staticGroup();
 
@@ -57,32 +66,34 @@
                 platforms.create(750, 220, 'ground');
 
 
-                player = this.physics.add.sprite(100, 450, 'dude');
+                player = this.physics.add.sprite(100, 450, 'box_dude');
 
                 player.setBounce(0.2);
                 player.setCollideWorldBounds(true);
 
+                emitter.startFollow(player);
                 this.anims.create({
                     key: 'left',
-                    frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+                    frames: [ {key: "box_dude", frame: 0} ],
                     frameRate: 10,
                     repeat: -1
                 });
 
                 this.anims.create({
                     key: 'turn',
-                    frames: [ { key: 'dude', frame: 4 } ],
+                    frames: [ { key: 'box_dude', frame: 1 } ],
                     frameRate: 20
                 });
 
                 this.anims.create({
                     key: 'right',
-                    frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+                    frames: [ { key: 'box_dude', frame: 2 } ],
                     frameRate: 10,
                     repeat: -1
                 });
 
                 this.physics.add.collider(player, platforms);
+                this.physics.world.setBounds(0,0,2880,1800);
 
                 cursors = this.input.keyboard.createCursorKeys();
 
@@ -114,6 +125,7 @@
 
                 this.cameras.main.setSize(800, 600);
                 this.cameras.main.startFollow(player);
+                this.cameras.main.setBounds(0, 0, 2880, 1800);
 
             }
 
@@ -137,7 +149,7 @@
                     player.anims.play('turn');
                 }
 
-                if (cursors.up.isDown && player.body.touching.down)
+                if (cursors.up.isDown && (player.body.touching.down || player.y == 1776))
                 {
                     player.setVelocityY(-330);
                 }
@@ -147,7 +159,14 @@
                     {
                         player.setVelocityY(440);
                     }
-                }        
+                }
+                if(player.x != lastx || player.y != lasty){
+                    console.log(player.x + "  " + player.y)
+                    lastx = player.x;
+                    lasty = player.y;
+                }
+                particles.emitParticleAt(player.x, player.y);
+                      
             }
 
             function collectStar(player, star)

@@ -11,7 +11,7 @@
             
             var config = {
                 type: Phaser.AUTO,
-                width: 800,
+                width: 1024,
                 height: 600,
                 physics: {
                     default: 'arcade',
@@ -44,21 +44,33 @@
                     'assets/box_dude.png',
                     { frameWidth: 32, frameHeight: 32 }
                 );
+                this.load.image('gplain', 'assets/ground_plain.png');
+                this.load.image('mparticle', 'assets/move_particle.png');
+                this.load.image('smoke', 'assets/smoke-puff.png');
             }
         
             function create ()
             {   
-                window.particles = this.add.particles('bomb');
-                var emitter = particles.createEmitter({
-                    speed: 100,
-                    scale: { start: 1, end: 0 },
-                    blendMode: 'ADD'
-                });
                 
                 this.add.image(1440, 900, 'background');
 
-                platforms = this.physics.add.staticGroup();
+                mparticles = this.add.particles('mparticle');
+                window.emitter = mparticles.createEmitter({
+                    speed: 50,
+                    scale: { start: 1, end: 0 },
+                    blendMode: 'ADD'
+                });
+                smokeparticle = this.add.particles('smoke');
+                window.smokeEmitter = smokeparticle.createEmitter({
+                    speed: 100,
+                    scale: { start: 0.45, end: 0 },
+                    belndMode: 'ADD'
+                });
+                
+                groundplain = this.physics.add.staticGroup();
+                groundplain.create(1440, 1768, 'gplain').setScale(2).refreshBody();
 
+                platforms = this.physics.add.staticGroup();
                 platforms.create(400, 568, 'ground').setScale(2).refreshBody();
 
                 platforms.create(600, 400, 'ground');
@@ -71,7 +83,7 @@
                 player.setBounce(0.2);
                 player.setCollideWorldBounds(true);
 
-                emitter.startFollow(player);
+                
                 this.anims.create({
                     key: 'left',
                     frames: [ {key: "box_dude", frame: 0} ],
@@ -110,22 +122,25 @@
 
                 });
                 this.physics.add.collider(stars, platforms);
-
                 this.physics.add.overlap(player, stars, collectStar, null, this);
-
+                
                 scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
                 scoreText.fixedToCamera = true;
                 
                 bombs = this.physics.add.group();
 
                 this.physics.add.collider(bombs, platforms);
-
                 this.physics.add.collider(player, bombs, hitBomb, null, this);
+                this.physics.add.collider(player, groundplain);
 
 
-                this.cameras.main.setSize(800, 600);
+                this.cameras.main.setSize(1024, 600);
                 this.cameras.main.startFollow(player);
                 this.cameras.main.setBounds(0, 0, 2880, 1800);
+
+                /* TODO: fix minimap */
+                /*this.minimap = this.cameras.add(300, 200, 360, 235).setZoom(0.1);*/
+                
 
             }
 
@@ -149,9 +164,13 @@
                     player.anims.play('turn');
                 }
 
-                if (cursors.up.isDown && (player.body.touching.down || player.y == 1776))
+                if (cursors.up.isDown && (player.body.touching.down || player.y == 1784))
                 {
                     player.setVelocityY(-330);
+                    smokeEmitter.startFollow(player);
+                }
+                else{
+                    smokeEmitter.stopFollow(player);
                 }
                 if (cursors.down.isDown)
                 {
@@ -164,8 +183,17 @@
                     console.log(player.x + "  " + player.y)
                     lastx = player.x;
                     lasty = player.y;
+                    
+                    moving = true;
+                }else{
+                    moving = false;
                 }
-                particles.emitParticleAt(player.x, player.y);
+                if(moving && player.body.touching.down){
+                    emitter.startFollow(player);
+                }else{
+                    emitter.stopFollow(player);
+                }
+                
                       
             }
 

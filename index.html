@@ -62,9 +62,8 @@
                 });
                 smokeparticle = this.add.particles('smoke');
                 window.smokeEmitter = smokeparticle.createEmitter({
-                    speed: 100,
-                    scale: { start: 0.45, end: 0 },
-                    belndMode: 'ADD'
+                    speed: 0,
+                    scale: { start: 0.55, end: 0 }
                 });
                 
                 groundplain = this.physics.add.staticGroup();
@@ -108,7 +107,6 @@
                 this.physics.world.setBounds(0,0,2880,1800);
 
                 cursors = this.input.keyboard.createCursorKeys();
-
 
                 stars = this.physics.add.group({
                     key: 'star',
@@ -167,10 +165,10 @@
                 if (cursors.up.isDown && (player.body.touching.down || player.y == 1784))
                 {
                     player.setVelocityY(-330);
-                    smokeEmitter.startFollow(player);
+                    smokeEmitter.setPosition(player.x + 0, player.y + 15);
                 }
                 else{
-                    smokeEmitter.stopFollow(player);
+                    smokeEmitter.setPosition(-10, -10);
                 }
                 if (cursors.down.isDown)
                 {
@@ -189,11 +187,16 @@
                     moving = false;
                 }
                 if(moving && player.body.touching.down){
-                    emitter.startFollow(player);
+                    emitter.setPosition(player.x + 0, player.y + 15);
                 }else{
-                    emitter.stopFollow(player);
+                    emitter.setPosition(-10, -10);
                 }
-                
+                if(moving && !player.body.touching.down)
+                {
+                    inAir = true;
+                }else{
+                    inAir = false;
+                }
                       
             }
 

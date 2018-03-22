@@ -47,13 +47,17 @@
                 this.load.image('gplain', 'assets/ground_plain.png');
                 this.load.image('mparticle', 'assets/move_particle.png');
                 this.load.image('smoke', 'assets/smoke-puff.png');
+                this.load.image('gun1', 'assets/gun1.png');
             }
         
             function create ()
             {   
-                
+                /* Adds the background to the scene */
                 this.add.image(1440, 900, 'background');
 
+
+
+                /* <PARTICLES> */
                 mparticles = this.add.particles('mparticle');
                 window.emitter = mparticles.createEmitter({
                     speed: 50,
@@ -65,7 +69,10 @@
                     speed: 0,
                     scale: { start: 0.55, end: 0 }
                 });
-                
+                /* </PARTICLES> */
+
+
+                /* <PLATFORM CREATIONS AND PLACEMETNS> */
                 groundplain = this.physics.add.staticGroup();
                 groundplain.create(1440, 1768, 'gplain').setScale(2).refreshBody();
 
@@ -75,19 +82,28 @@
                 platforms.create(600, 400, 'ground');
                 platforms.create(50, 250, 'ground');
                 platforms.create(750, 220, 'ground');
+                platforms.create(360, 1570, 'gplain').setScale(0.5).refreshBody();
+                platforms.create(281, 1400, 'gplain').setScale(0.4).refreshBody();
+                platforms.create(281, 1220, 'gplain').setScale(0.1).refreshBody();
+                platforms.create(560, 1100, 'gplain').setScale(0.4).refreshBody();
+                platforms.create(900, 950, 'gplain').setScale(0.5).refreshBody();
+                platforms.create(620, 770, 'gplain').setScale(0.5).refreshBody();
+                platforms.create(800, 650, 'gplain').setScale(0.1).refreshBody();
+                /* </PLATFORM CREATIONS AND PLACEMETNS> */
 
-
-                player = this.physics.add.sprite(100, 450, 'box_dude');
-
+                /* adds the player spirte to the scene */    
+                player = this.physics.add.sprite(100, 1650, 'box_dude');
+                /* basic settings for the player */
                 player.setBounce(0.2);
                 player.setCollideWorldBounds(true);
 
-                
+
+                /* <ANIMATIONS> */
                 this.anims.create({
-                    key: 'left',
-                    frames: [ {key: "box_dude", frame: 0} ],
+                    key: 'left', /* key used to access animation and use */
+                    frames: [ {key: "box_dude", frame: 0} ], /* selects what frame of the spiritesheet it should use*/
                     frameRate: 10,
-                    repeat: -1
+                    repeat: -1 /* Loops */
                 });
 
                 this.anims.create({
@@ -102,9 +118,7 @@
                     frameRate: 10,
                     repeat: -1
                 });
-
-                this.physics.add.collider(player, platforms);
-                this.physics.world.setBounds(0,0,2880,1800);
+                /* </ANIMATIONS> */
 
                 cursors = this.input.keyboard.createCursorKeys();
 
@@ -115,29 +129,51 @@
                 });
 
                 stars.children.iterate(function (child) {
-
                     child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-
                 });
-                this.physics.add.collider(stars, platforms);
-                this.physics.add.overlap(player, stars, collectStar, null, this);
                 
                 scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
                 scoreText.fixedToCamera = true;
-                
+
                 bombs = this.physics.add.group();
 
+                this.physics.world.setBounds(0,0,2880,1800);  /* rezises the worldbounds from 0x0-800x600 to 0x0-2880x1880 (same as background size)*/
+
+                /* some colliders */
+                this.physics.add.collider(player, platforms);
+                this.physics.add.collider(stars, platforms);
+                this.physics.add.overlap(player, stars, collectStar, null, this);
                 this.physics.add.collider(bombs, platforms);
                 this.physics.add.collider(player, bombs, hitBomb, null, this);
                 this.physics.add.collider(player, groundplain);
 
-
+                /* main camera settings */
                 this.cameras.main.setSize(1024, 600);
                 this.cameras.main.startFollow(player);
-                this.cameras.main.setBounds(0, 0, 2880, 1800);
+                this.cameras.main.setBounds(0, 0, 2880, 1800); /* sets the camerabounds to the same as the worldbounds */
 
                 /* TODO: fix minimap */
                 /*this.minimap = this.cameras.add(300, 200, 360, 235).setZoom(0.1);*/
+                
+
+                /* Object that holds all data for every gun pickup */
+                this.guns = [gun1 = {
+                    'texture' : 'gun1',
+                    'bullet_texture' : 'gun1_bullet',
+                    'firespeed' : 1,
+                    'bulletspeed' : 10,
+                    'damage' : 5
+                },
+                gun2 = {
+                    'texture' : 'gun2',
+                    'bullet_texture' : 'gun2_bullet',
+                    'firespeed' : 5,
+                    'bulletspeed' : 15,
+                    'damage' : 5
+                }]
+
+                var gunHeld;
+
                 
 
             }
@@ -178,7 +214,7 @@
                     }
                 }
                 if(player.x != lastx || player.y != lasty){
-                    console.log(player.x + "  " + player.y)
+                    /* console.log(player.x + "  " + player.y) */
                     lastx = player.x;
                     lasty = player.y;
                     

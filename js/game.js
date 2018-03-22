@@ -25,10 +25,10 @@ class Main{
         this.scoreText;
         this.lastx = 0;
         this.lasty = 0;
-        
+        window.mc_this = this;
         this.currentMap;
 
-        Phaser.currentGame = new Phaser.Game(config);
+        Phaser.currentGame = new Phaser.Game(config);   
     }
     
     preload ()
@@ -50,6 +50,8 @@ class Main{
     create ()
     {   
 
+        this.add.image(1440, 900, "map1_bg");
+
         /* <PARTICLES> */
         this.mparticles = this.add.particles('mparticle');
         this.emitter = this.mparticles.createEmitter({
@@ -63,17 +65,18 @@ class Main{
             scale: { start: 0.55, end: 0 }
         });
         /* </PARTICLES> */
+
         
-
         /* <MAPS> */
-        this.add.image(1440, 900, "map1_bg");
-
         this.map1 = new Map1(this.physics);
         /* this.map2 = new Map2(this.physics); */
 
         this.currentMap = this.map1;
-        
         /* </MAPS> */
+
+
+        
+        
 
         /* adds the player spirte to the scene */    
         this.player = this.physics.add.sprite(this.map1.player_spawn.x, this.map1.player_spawn.x, 'box_dude');
@@ -126,9 +129,9 @@ class Main{
         /* some colliders */
         this.physics.add.collider(this.player, this.currentMap.platforms);
         this.physics.add.collider(this.stars, this.currentMap.platforms);
-        this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
+        this.physics.add.overlap(this.player, this.stars, mc_this.collectStar, null, this);
         this.physics.add.collider(this.bombs, this.currentMap.platforms);
-        this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+        this.physics.add.collider(this.player, this.bombs, mc_this.hitBomb, null, this);
         this.physics.add.collider(this.player, this.currentMap.groundplain);
 
         /* main camera settings */
@@ -196,7 +199,7 @@ class Main{
             }
         }
         if(this.player.x != this.lastx || this.player.y != this.lasty){
-            /* console.log(player.x + "  " + player.y) */
+            /* console.log(this.player.x + "  " + this.player.y) */
             this.lastx = this.player.x;
             this.lasty = this.player.y;
             
@@ -214,20 +217,17 @@ class Main{
             this.inAir = true;
         }else{
             this.inAir = false;
-        }
-              
+        }  
     }
 
     collectStar(player, star)
     {
-        console.log("collected");
         star.disableBody(true, true);
-
-        score += 10;
-        scoreText.setText('Score: ' + score);
-        if (stars.countActive(true) === 0)
+        mc_this.score += 10;      
+        this.scoreText.setText('Score: ' + mc_this.score);
+        if (this.stars.countActive(true) === 0)
         {
-            stars.children.iterate(function (child) {
+            this.stars.children.iterate(function (child) {
 
                 child.enableBody(true, child.x, 0, true, true);
 
@@ -235,7 +235,7 @@ class Main{
 
             var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
 
-            var bomb = bombs.create(x, 16, 'bomb');
+            var bomb = this.bombs.create(x, 16, 'bomb');
             bomb.setBounce(1);
             bomb.setCollideWorldBounds(true);
             bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
@@ -252,7 +252,7 @@ class Main{
 
         player.anims.play('turn');
 
-        gameOver = true;
+        this.gameOver = true;
     }
 
     render()

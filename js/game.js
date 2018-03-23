@@ -35,6 +35,7 @@ class Main{
     {
         this.load.image('map1_bg', 'assets/background.jpg');
         this.load.image('ground', 'assets/platform.png');
+        this.load.image('wall', 'assets/wall.png');
         this.load.image('star', 'assets/star.png');
         this.load.image('bomb', 'assets/bomb.png');
         this.load.spritesheet('box_dude', 
@@ -79,7 +80,7 @@ class Main{
         
 
         /* adds the player spirte to the scene */    
-        this.player = this.physics.add.sprite(this.map1.player_spawn.x, this.map1.player_spawn.x, 'box_dude');
+        this.player = this.physics.add.sprite(this.map1.player_spawn.x, this.map1.player_spawn.y, 'box_dude');
         /* basic settings for the player */
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
@@ -183,9 +184,9 @@ class Main{
             this.player.anims.play('turn');
         }
 
-        if (this.cursors.up.isDown && (this.player.body.touching.down || this.player.y == 1784))
+        if (this.cursors.up.isDown && this.player.body.touching.down)
         {
-            this.player.setVelocityY(-330);
+            this.player.setVelocityY(-360);
             this.smokeEmitter.setPosition(this.player.x + 0, this.player.y + 15);
         }
         else{

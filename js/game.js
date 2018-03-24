@@ -16,8 +16,7 @@ class Main{
             scene: {
                 preload: this.preload,
                 create: this.create,
-                update: this.update,
-                render: this.render
+                update: this.update
             }
         };
         
@@ -28,7 +27,7 @@ class Main{
         window.mc_this = this;
         this.currentMap;
 
-        Phaser.currentGame = new Phaser.Game(config);   
+        this.game = new Phaser.Game(config);   
     }
     
     preload ()
@@ -52,7 +51,7 @@ class Main{
     {   
 
         this.add.image(1440, 900, "map1_bg");
-
+        this.game = mc_this.game;
         /* <PARTICLES> */
         this.mparticles = this.add.particles('mparticle');
         this.emitter = this.mparticles.createEmitter({
@@ -121,8 +120,7 @@ class Main{
         });
         
         this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
-        this.scoreText.fixedToCamera = true;
-
+        this.scoreText.setScrollFactor(0);
         this.bombs = this.physics.add.group();
 
         this.physics.world.setBounds(0,0,2880,1800);  /* rezises the worldbounds from 0x0-800x600 to 0x0-2880x1880 (same as background size)*/
@@ -136,13 +134,19 @@ class Main{
         this.physics.add.collider(this.player, this.currentMap.groundplain);
 
         /* main camera settings */
-        this.cameras.main.setSize(1024, 600);
+        mc_this.mainCam = this.cameras.main;
+        this.cameras.main.setSize(1024, 600);  /* sets default main camera size*/
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, 2880, 1800); /* sets the camerabounds to the same as the worldbounds */
 
         /* TODO: fix minimap */
         /*this.minimap = this.cameras.add(300, 200, 360, 235).setZoom(0.1);*/
         
+        this.fullscreenLabel = this.add.text(900, 500, 'Toggle Fullscreen', { font: '15px Arial', fill: '#fff' });
+        this.fullscreenLabel.setInteractive();
+        this.fullscreenLabel.on("pointerdown", mc_this.toggleFullscreen, this);
+        this.fullscreenLabel.setScrollFactor(0);
+        /*this.fullscreenLabel.on("pointerdown", function(){console.log("full in called")});*/
 
         /* Object that holds all data for every gun pickup */
         this.guns = {gun1 : {
@@ -161,7 +165,6 @@ class Main{
         }}
 
         var gunHeld;
-
     }
 
     update(){
@@ -184,7 +187,7 @@ class Main{
             this.player.anims.play('turn');
         }
 
-        if (this.cursors.up.isDown && this.player.body.touching.down)
+        if (this.cursors.up.isDown/* && this.player.body.touching.down*/)
         {
             this.player.setVelocityY(-360);
             this.smokeEmitter.setPosition(this.player.x + 0, this.player.y + 15);
@@ -256,9 +259,21 @@ class Main{
         this.gameOver = true;
     }
 
-    render()
+    toggleFullscreen()
     {
-        return this;
+        console.log("full ")
+        if (!this.isFullscreen)
+        {
+            this.isFullscreen = true;
+            mc_this.mainCam.setSize(window.innerWidth, window.innerHeight)
+            this.game.renderer.resize(window.innerWidth, window.innerHeight, 1.0)
+        }else{
+            this.isFullscreen = false;
+            mc_this.mainCam.setSize(1024, 600)
+            this.game.renderer.resize(1024, 600, 1.0);
+        }
+        
+        
     }
 }
 

@@ -34,11 +34,10 @@ class Map1 extends Map
         this.platforms.create(1722, 1536, 'ground');
         this.platforms.create(2122, 1536, 'ground');
         this.platforms.create(2482, 1536, 'ground').setScale(0.8, 1).refreshBody();
-        this.platforms.create(2880, 1467, 'wall').setScale(1, 1.35).refreshBody();       
-        this.platforms.create(2658, 1432, 'wall').setScale(1, 0.6).refreshBody();
-
-        this.platforms.create(900, 950, 'gplain').setScale(0.5).refreshBody();
-        this.platforms.create(620, 770, 'gplain').setScale(0.5).refreshBody();
-        this.platforms.create(800, 650, 'gplain').setScale(0.1).refreshBody();
+        this.platforms.create(2880, 1137, 'wall').setScale(1, 3).refreshBody();       
+        this.platforms.create(2658, 1252, 'wall').setScale(1, 1.5).refreshBody();
+        this.platforms.create(2664, 553, 'ground')
+        this.platforms.create(2448, 937, 'wall').setScale(1, 2).refreshBody();
+        
     }
 }

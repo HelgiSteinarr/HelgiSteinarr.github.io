@@ -126,7 +126,7 @@ class Main{
         this.physics.world.setBounds(0,0,2880,1800);  /* rezises the worldbounds from 0x0-800x600 to 0x0-2880x1880 (same as background size)*/
 
         /* some colliders */
-        this.physics.add.collider(this.player, this.currentMap.platforms);
+        /*this.physics.add.collider(this.player, this.currentMap.platforms);*/
         this.physics.add.collider(this.stars, this.currentMap.platforms);
         this.physics.add.overlap(this.player, this.stars, mc_this.collectStar, null, this);
         this.physics.add.collider(this.bombs, this.currentMap.platforms);
@@ -139,14 +139,17 @@ class Main{
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, 2880, 1800); /* sets the camerabounds to the same as the worldbounds */
 
-        /* TODO: fix minimap */
+        /* TODO: finalize minimap */
         /*this.minimap = this.cameras.add(300, 200, 360, 235).setZoom(0.1);*/
         
+        /*
+        Disabled temporarily
+
         this.fullscreenLabel = this.add.text(900, 500, 'Toggle Fullscreen', { font: '15px Arial', fill: '#fff' });
         this.fullscreenLabel.setInteractive();
         this.fullscreenLabel.on("pointerdown", mc_this.toggleFullscreen, this);
         this.fullscreenLabel.setScrollFactor(0);
-        /*this.fullscreenLabel.on("pointerdown", function(){console.log("full in called")});*/
+        */
 
         /* Object that holds all data for every gun pickup */
         this.guns = {gun1 : {
@@ -170,13 +173,15 @@ class Main{
     update(){
         if (this.cursors.left.isDown)
         {
-            this.player.setVelocityX(-160);
+            /*this.player.setVelocityX(-160);*/
+            this.player.setVelocityX(-1000);
 
             this.player.anims.play('left', true);
         }
         else if (this.cursors.right.isDown)
         {
-            this.player.setVelocityX(160);
+            /*this.player.setVelocityX(160);*/
+            this.player.setVelocityX(1000);
 
             this.player.anims.play('right', true);
         }
@@ -187,7 +192,7 @@ class Main{
             this.player.anims.play('turn');
         }
 
-        if (this.cursors.up.isDown/* && this.player.body.touching.down*/)
+        if (this.cursors.up.isDown /*&& this.player.body.touching.down*/)
         {
             this.player.setVelocityY(-360);
             this.smokeEmitter.setPosition(this.player.x + 0, this.player.y + 15);
@@ -261,7 +266,10 @@ class Main{
 
     toggleFullscreen()
     {
-        console.log("full ")
+        /*
+
+        DISABLED TEMPORARILY
+
         if (!this.isFullscreen)
         {
             this.isFullscreen = true;
@@ -272,7 +280,7 @@ class Main{
             mc_this.mainCam.setSize(1024, 600)
             this.game.renderer.resize(1024, 600, 1.0);
         }
-        
+        */
         
     }
 }

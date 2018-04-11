@@ -73,9 +73,6 @@ class Main{
 
         this.currentMap = this.map1;
         /* </MAPS> */
-
-
-        
         
 
         /* adds the player spirte to the scene */    
@@ -108,30 +105,22 @@ class Main{
         /* </ANIMATIONS> */
 
         this.cursors = this.input.keyboard.createCursorKeys();
-
-        this.stars = this.physics.add.group({
-            key: 'star',
-            repeat: 11,
-            setXY: { x: 12, y: 0, stepX: 70 }
-        });
-
-        this.stars.children.iterate(function (child) {
-            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-        });
         
         this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
         this.scoreText.setScrollFactor(0);
-        this.bombs = this.physics.add.group();
 
         this.physics.world.setBounds(0,0,2880,1800);  /* rezises the worldbounds from 0x0-800x600 to 0x0-2880x1880 (same as background size)*/
 
         /* some colliders */
         /*this.physics.add.collider(this.player, this.currentMap.platforms);*/
-        this.physics.add.collider(this.stars, this.currentMap.platforms);
-        this.physics.add.overlap(this.player, this.stars, mc_this.collectStar, null, this);
-        this.physics.add.collider(this.bombs, this.currentMap.platforms);
-        this.physics.add.collider(this.player, this.bombs, mc_this.hitBomb, null, this);
+
+        this.physics.add.collider(this.currentMap.stars, this.currentMap.platforms);
+        this.physics.add.overlap(this.player, this.currentMap.stars, mc_this.collectStar, null, this);
+        this.physics.add.collider(this.currentMap.bombs, this.currentMap.platforms);
+        this.physics.add.collider(this.currentMap.bombs, this.currentMap.groundplain);
+        this.physics.add.collider(this.player, this.currentMap.bombs, mc_this.hitBomb, null, this);
         this.physics.add.collider(this.player, this.currentMap.groundplain);
+        this.physics.add.collider(this.player, this.currentMap.jumppads, mc_this.onJumppad, null, this);
 
         /* main camera settings */
         mc_this.mainCam = this.cameras.main;
@@ -150,37 +139,19 @@ class Main{
         this.fullscreenLabel.on("pointerdown", mc_this.toggleFullscreen, this);
         this.fullscreenLabel.setScrollFactor(0);
         */
-
-        /* Object that holds all data for every gun pickup */
-        this.guns = {gun1 : {
-            texture : 'gun1',
-            bullet_texture : 'gun1_bullet',
-            firespeed : 1,
-            bulletspeed : 10,
-            damage : 5
-        },
-        gun2 : {
-            texture : 'gun2',
-            bullet_texture : 'gun2_bullet',
-            firespeed : 5,
-            bulletspeed : 15,
-            damage : 5
-        }}
-
-        var gunHeld;
     }
 
     update(){
         if (this.cursors.left.isDown)
         {
-            /*this.player.setVelocityX(-160);*/
+            /*this.player.setVelocityX(-200);*/
             this.player.setVelocityX(-1000);
 
             this.player.anims.play('left', true);
         }
         else if (this.cursors.right.isDown)
         {
-            /*this.player.setVelocityX(160);*/
+            /*this.player.setVelocityX(200);*/
             this.player.setVelocityX(1000);
 
             this.player.anims.play('right', true);
@@ -234,23 +205,6 @@ class Main{
         star.disableBody(true, true);
         mc_this.score += 10;      
         this.scoreText.setText('Score: ' + mc_this.score);
-        if (this.stars.countActive(true) === 0)
-        {
-            this.stars.children.iterate(function (child) {
-
-                child.enableBody(true, child.x, 0, true, true);
-
-            });
-
-            var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-
-            var bomb = this.bombs.create(x, 16, 'bomb');
-            bomb.setBounce(1);
-            bomb.setCollideWorldBounds(true);
-            bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-            bomb.allowGravity = false;
-
-        }
     }
 
     hitBomb (player, bomb)
@@ -262,6 +216,10 @@ class Main{
         player.anims.play('turn');
 
         this.gameOver = true;
+    }
+
+    onJumppad (player){
+        player.setVelocityY(-740)
     }
 
     toggleFullscreen()
@@ -283,6 +241,7 @@ class Main{
         */
         
     }
+
 }
 
 window.main = new Main();

@@ -44,7 +44,7 @@ class Main{
         this.load.image('gplain', 'assets/ground_plain.png');
         this.load.image('mparticle', 'assets/move_particle.png');
         this.load.image('smoke', 'assets/smoke-puff.png');
-        this.load.image('gun1', 'assets/gun1.png');
+        this.load.image('spikes', 'assets/spikes.png');
     }
 
     create ()
@@ -112,15 +112,18 @@ class Main{
         this.physics.world.setBounds(0,0,2880,1800);  /* rezises the worldbounds from 0x0-800x600 to 0x0-2880x1880 (same as background size)*/
 
         /* some colliders */
-        /*this.physics.add.collider(this.player, this.currentMap.platforms);*/
+        this.physics.add.collider(this.player, this.currentMap.platforms);
 
         this.physics.add.collider(this.currentMap.stars, this.currentMap.platforms);
-        this.physics.add.overlap(this.player, this.currentMap.stars, mc_this.collectStar, null, this);
+        this.physics.add.collider(this.currentMap.stars, this.currentMap.groundplain);
         this.physics.add.collider(this.currentMap.bombs, this.currentMap.platforms);
         this.physics.add.collider(this.currentMap.bombs, this.currentMap.groundplain);
+
+        this.physics.add.overlap(this.player, this.currentMap.stars, mc_this.collectStar, null, this);
         this.physics.add.collider(this.player, this.currentMap.bombs, mc_this.hitBomb, null, this);
         this.physics.add.collider(this.player, this.currentMap.groundplain);
         this.physics.add.collider(this.player, this.currentMap.jumppads, mc_this.onJumppad, null, this);
+        this.physics.add.collider(this.player, this.currentMap.spikes, mc_this.hitBomb, null, this);
 
         /* main camera settings */
         mc_this.mainCam = this.cameras.main;
@@ -145,14 +148,14 @@ class Main{
         if (this.cursors.left.isDown)
         {
             /*this.player.setVelocityX(-200);*/
-            this.player.setVelocityX(-1000);
+            this.player.setVelocityX(-200);
 
             this.player.anims.play('left', true);
         }
         else if (this.cursors.right.isDown)
         {
             /*this.player.setVelocityX(200);*/
-            this.player.setVelocityX(1000);
+            this.player.setVelocityX(200);
 
             this.player.anims.play('right', true);
         }
@@ -163,7 +166,7 @@ class Main{
             this.player.anims.play('turn');
         }
 
-        if (this.cursors.up.isDown /*&& this.player.body.touching.down*/)
+        if (this.cursors.up.isDown && this.player.body.touching.down)
         {
             this.player.setVelocityY(-360);
             this.smokeEmitter.setPosition(this.player.x + 0, this.player.y + 15);
@@ -210,9 +213,7 @@ class Main{
     hitBomb (player, bomb)
     {
         this.physics.pause();
-
         player.setTint(0xff0000);
-
         player.anims.play('turn');
 
         this.gameOver = true;

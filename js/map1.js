@@ -13,13 +13,10 @@ class Map1 extends Map
         this.jumppads = this.physics.add.staticGroup();
         this.stars = this.physics.add.group();
         this.bombs = this.physics.add.group();
+        this.spikes = this.physics.add.staticGroup();
 
         this.groundplain.create(1440, 1768, 'gplain').setScale(2).refreshBody();
-        this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
 
-        this.platforms.create(600, 400, 'ground');
-        this.platforms.create(50, 250, 'ground');
-        this.platforms.create(750, 220, 'ground');
         this.platforms.create(200, 1570, 'ground');
 
         this.platforms.create(575, 1538, 'wall');
@@ -32,7 +29,8 @@ class Map1 extends Map
         this.platforms.create(784, 1416, 'wall');
         this.platforms.create(998, 1600, 'ground');
 
-        
+        this.stars.create(800, 1700, 'star');
+        this.create_bomb(1900, 1600, 'bomb');
 
         this.platforms.create(1800, 1722, 'ground');
         this.platforms.create(1840, 1691, 'ground').setScale(0.8, 1).refreshBody();
@@ -56,6 +54,36 @@ class Map1 extends Map
         this.platforms.create(1646, 1225, 'ground').setScale(0.5, 1).refreshBody();
         this.platforms.create(1484, 1193, 'ground').setScale(0.5, 1).refreshBody();
         this.platforms.create(1322, 1161, 'ground').setScale(0.5, 1).refreshBody();
+
+        this.create_bomb(1900, 1400, 'bomb');
+
+        this.platforms.create(1176, 1432, 'wall').setScale(1, 0.6).refreshBody();
+        this.platforms.create(1332, 1480, 'ground').setScale(0.7, 1).refreshBody();
+        this.stars.create(1220, 1520, 'star');
+        this.stars.create(1270, 1520, 'star');
+        this.stars.create(1320, 1520, 'star');
+        this.stars.create(1370, 1520, 'star');
+        this.stars.create(1420, 1520, 'star');
+        this.create_bomb(1220, 1520, 'bomb');
+        this.create_bomb(1300, 1490, 'bomb');
+
+        this.spikes.create(834, 1569, 'spikes').setScale(0.5, 0.2).refreshBody();
+        this.spikes.create(902, 1569, 'spikes').setScale(0.5, 0.2).refreshBody();
+        this.spikes.create(970, 1569, 'spikes').setScale(0.5, 0.2).refreshBody();
+        this.spikes.create(1038, 1569, 'spikes').setScale(0.5, 0.2).refreshBody();
+        this.spikes.create(1106, 1569, 'spikes').setScale(0.5, 0.2).refreshBody();
+
+        this.platforms.create(1238, 1025, 'wall').setScale(1, 0.6).refreshBody();
+        this.platforms.create(1022, 921, 'ground');
+        this.platforms.create(1022, 700, 'ground');
+        this.platforms.create(1422, 700, 'ground');
+        this.platforms.create(1822, 700, 'ground');
+
+        this.create_bomb(1100, 1000, 'bomb');
+        this.jumppads.create(100, 1181, 'ground').setScale(0.2).refreshBody();
+
+        this.platforms.create(838, 484, 'wall');
+        this.platforms.create(838, 84, 'wall');
     }
 
     create_bomb(x, y, texture){

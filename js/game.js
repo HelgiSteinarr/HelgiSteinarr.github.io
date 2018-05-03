@@ -142,6 +142,7 @@ class Main{
         this.fullscreenLabel.on("pointerdown", mc_this.toggleFullscreen, this);
         this.fullscreenLabel.setScrollFactor(0);
         */
+        wiki();
     }
 
     update(){

@@ -1,4 +1,4 @@
-window.onload = function(){
+function wiki(){
     /* Creates the wiki "page" under the game */
     let section = document.createElement("section");
     let n1h1 = document.createElement("h1");
